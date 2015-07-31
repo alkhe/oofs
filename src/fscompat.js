@@ -3,7 +3,7 @@ export default {
 		'access',
 		'exists',
 		'readFile',
-		'open',
+		// 'open', special case
 		'truncate',
 		'mkdir',
 		'readdir',
