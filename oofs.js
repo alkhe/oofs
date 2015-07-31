@@ -1,65 +1,7 @@
 import fs from 'fs';
-
-let fscompat = {
-	fn: [
-		'access',
-		'exists',
-		'readFile',
-		'open',
-		'truncate',
-		'mkdir',
-		'readdir',
-		'lstat',
-		'stat',
-		'readlink',
-		'symlink',
-		'link',
-		'unlink',
-		'chmod',
-		'chown',
-		'utimes',
-		'writeFile',
-		'appendFile',
-		'watch',
-		'watchFile',
-		'unwatchFile',
-		'realpath',
-		'createReadStream',
-		'createWriteStream'
-	],
-	fd: [
-		'close',
-		'read',
-		'write',
-		'fdatasync',
-		'fsync',
-		'fstat',
-		'fchmod',
-		'fchown',
-		'futimes'
-	]
-};
-
-const FILENAME = Symbol('Filename');
-const STAT = Symbol('Stat');
-const FD = Symbol('File Descriptor');
-
-let Driver = filename => {
-	let file = {
-		[FILENAME]: filename,
-		[STAT]: fs.statSync(filename),
-		[FD]: null
-	};
-
-	if (file[STAT].isDirectory()) {
-		let children = fs.readdirSync(filename);
-		for (let child of children) {
-			file[child] = Driver(child);
-		}
-	}
-
-	return file;
-};
+import { FILENAME } from './protected';
+import Driver from './driver';
+import fscompat from './fscompat';
 
 let ex = {};
 
@@ -71,7 +13,7 @@ let filenamePartial = (obj, src, method) => {
 
 fscompat.fn.forEach(method => {
 	if (!fs[method]) {
-		throw new Error();
+		throw new Error('Method not defined on fs.');
 	}
 	filenamePartial(ex, fs, method);
 	let syncfn = `${ method }Sync`;
@@ -81,5 +23,9 @@ fscompat.fn.forEach(method => {
 });
 
 ex.Driver = Driver;
+
+ex.require = function() {
+	return require(this[FILENAME]);
+};
 
 export default ex;
