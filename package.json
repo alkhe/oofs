@@ -1,0 +1,17 @@
+{
+  "name": "oofs",
+  "version": "0.0.1",
+  "description": "An Object-Oriented In-Memory filesystem driver.",
+  "main": "index.js",
+  "scripts": {
+    "test": ":"
+  },
+  "keywords": [
+    "object",
+    "oriented",
+    "oofs",
+    "filesystem"
+  ],
+  "author": "synchronous",
+  "license": "MIT"
+}
